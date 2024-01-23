@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+    <style>
+      body {
+        background-color: #d3d3d3;
+        margin: 0;
+        padding: 0;
+      }
+      header {
+        margin: 0;
+        margin-bottom: 40px;
+        padding: 0;
+        height: 70px;
+        text-align: center;
+        background-color: aliceblue;
+        display: flex;
+        justify-content: center;
+      }
+      main {
+        text-align: center;
+        position: relative;
+      }
+      #canvas {
+        background-color: white;
+      }
+      #canvasTemp {
+        background: transparent;
+      }
+      canvas {
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      button {
+        margin-bottom: 10px;
+        margin: 10px 5px;
+        width: 50px;
+        height: 50px;
+        font-size: 30px;
+        color: #1e5995;
+      }
+
+      .settings {
+        margin-bottom: 10px;
+      }
+      .knopki {
+        display: flex;
+        align-items: flex-end;
+      }
+      p {
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="knopki">
+        <div class="settings">
+          <p>Цвет</p>
+          <input type="color" id="color" onchange="changecolor()" />
+        </div>
+        <button onclick="toolchange(0)">🖉</button>
+        <button onclick="toolchange(1)">🞐</button>
+        <button onclick="toolchange(2)">◯</button>
+        <button onclick="toolchange(3)">◼</button>
+        <button onclick="toolchange(4)">⬤</button>
+        <button onclick="Canvclear()">🗑</button>
+        <div class="settings">
+          <p>Размер кисти</p>
+          <input
+            type="text"
+            id="SetSize"
+            style="width: 100px; outline: none"
+            onkeydown="OnlyNumber(event)"
+            maxlength="4"
+            value="1"
+          />
+        </div>
+      </div>
+    </header>
+    <main>
+      <canvas
+        id="canvas"
+        height="600"
+        width="1200"
+        onmousemove="draw(event)"
+      ></canvas>
+      <canvas id="canvasTemp" height="600" width="1200"></canvas>
+    </main>
+    <script>
+      isclick = false;
+      let canv = document.getElementById("canvas");
+      let canvtemp = document.getElementById("canvasTemp");
+      let canvContext = canv.getContext("2d");
+      let canvtempContext = canvtemp.getContext("2d");
+      document.getElementById("SetSize").onchange = function () {
+        canvContext.lineWidth = this.value;
+        canvtempContext.lineWidth = this.value;
+      };
+      document.getElementById("color").onchange = function () {
+        canvContext.strokeStyle = this.value;
+        canvtempContext.strokeStyle = this.value;
+        canvContext.fillStyle = this.value;
+        canvtempContext.fillStyle = this.value;
+      };
+      let rad;
+      tool = 0;
+      canvtemp.onmousedown = start;
+      canvtemp.onmouseup = end;
+      canvtemp.onmousemove = draw;
+      canvContext.lineWidth = 1;
+      canvContext.lineCap = "round";
+      canvtempContext.lineWidth = 1;
+      canvtempContext.lineCap = "round";
+      x1 = 0;
+      x2 = 0;
+      y1 = 0;
+      y2 = 0;
+      function start(e) {
+        isclick = true;
+        x1 = e.offsetX;
+        y1 = e.offsetY;
+        canvContext.moveTo(x1, y1);
+      }
+      function end() {
+        isclick = false;
+        canvContext.beginPath();
+        switch (tool) {
+          case 1:
+            canvContext.rect(x1, y1, x2 - x1, y2 - y1);
+            break;
+          case 2:
+            canvContext.arc(x1, y1, rad, 0, (Math.PI / 180) * 360);
+            break;
+          case 3:
+            canvContext.fillRect(x1, y1, x2 - x1, y2 - y1);
+            break;
+          case 4:
+            canvContext.arc(x1, y1, rad, 0, (Math.PI / 180) * 360);
+            canvContext.fill();
+            break;
+        }
+        canvContext.stroke();
+      }
+      function draw(e) {
+        if (!isclick) return;
+
+        canvtempContext.clearRect(0, 0, 1200, 600);
+        canvtempContext.beginPath();
+        x2 = e.offsetX;
+        y2 = e.offsetY;
+        switch (tool) {
+          case 0:
+            canvContext.lineTo(e.offsetX, e.offsetY);
+            canvContext.stroke();
+            break;
+          case 1:
+            canvtempContext.rect(x1, y1, x2 - x1, y2 - y1);
+            canvtempContext.stroke();
+            break;
+          case 2:
+            Math.abs(y2 - y1) > Math.abs(x2 - x1)
+              ? (rad = Math.abs(y2 - y1))
+              : (rad = Math.abs(x2 - x1));
+            canvtempContext.arc(x1, y1, rad, 0, (Math.PI / 180) * 360);
+            canvtempContext.stroke();
+            break;
+          case 3:
+            canvtempContext.fillRect(x1, y1, x2 - x1, y2 - y1);
+            break;
+          case 4:
+            Math.abs(y2 - y1) > Math.abs(x2 - x1)
+              ? (rad = Math.abs(y2 - y1))
+              : (rad = Math.abs(x2 - x1));
+            canvtempContext.arc(x1, y1, rad, 0, (Math.PI / 180) * 360);
+            canvtempContext.fill();
+        }
+      }
+      function toolchange(toolid) {
+        tool = toolid;
+      }
+      function OnlyNumber(e) {
+        if (
+          !(
+            (e.which >= 48 && e.which <= 57) ||
+            (e.which >= 96 && e.which <= 105) ||
+            e.which == 8
+          )
+        ) {
+          e.preventDefault();
+        }
+      }
+      function setsize(e) {
+        console.log(e.value);
+      }
+      function Canvclear() {
+        canvContext.clearRect(0, 0, 1200, 600);
+        canvContext.beginPath();
+        canvtempContext.clearRect(0, 0, 1200, 600);
+        canvtempContext.beginPath();
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+    <style>
+      body {
+        background: url(image/Background.png) no-repeat center center fixed;
+        background-size: cover;
+      }
+      #h2end {
+        color: white;
+        font-size: 30px;
+        text-align: center;
+      }
+      #Next {
+        margin: auto;
+        display: block;
+      }
+      #Question {
+        text-align: center;
+        color: white;
+        font-size: 30px;
+      }
+      img {
+        display: block;
+        margin: auto;
+        border: 2px solid black;
+        border-radius: 10%;
+        height: 350px;
+        max-width: 800px;
+      }
+      .Answers {
+        margin: 30px auto;
+        width: 550px;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      button {
+        margin: 10px;
+        height: 70px;
+        width: 250px;
+        border-radius: 10px;
+        font-size: 1.4em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="Victoryna">
+      <div class="DivImage">
+        <img id="Qimg" />
+      </div>
+      <div>
+        <h2 id="Question"></h2>
+      </div>
+      <div class="Answers">
+        <button id="Ans1" onclick="Answered(1)"></button>
+        <button id="Ans2" onclick="Answered(2)"></button>
+        <button id="Ans3" onclick="Answered(3)"></button>
+        <button id="Ans4" onclick="Answered(4)"></button>
+      </div>
+      <div>
+        <button id="Next" onclick="NextQuestion()">Следующий вопрос</button>
+      </div>
+    </div>
+    <div id="End">
+      <h2 id="h2end"></h2>
+    </div>
+    <script>
+      let count = 0;
+      let otvetil = false;
+      class question {
+        constructor(
+          quest,
+          answer1,
+          answer2,
+          answer3,
+          answer4,
+          correctanswer,
+          img
+        ) {
+          this.quest = quest;
+          this.answer1 = answer1;
+          this.answer2 = answer2;
+          this.answer3 = answer3;
+          this.answer4 = answer4;
+          this.correctanswer = correctanswer;
+          this.img = img;
+        }
+      }
+      questions = new Array();
+
+      questions.push(
+        new question(
+          "Как зовут этого персонажа?",
+          "Лизун",
+          "Подлиза",
+          "Мелкий",
+          "Нереальный Шрекс",
+          4,
+          "images/shreks.jfif"
+        )
+      );
+      questions.push(
+        new question(
+          "Как зовут этого персонажа?",
+          "Шер-Хан",
+          "Король Луи",
+          "Дон корнаж",
+          "Поночка",
+          3,
+          "images/don_karnage.jpg"
+        )
+      );
+      questions.push(
+        new question(
+          "Как зовут этого персонажа?",
+          "Матрёна",
+          "Утёна",
+          "Поночка",
+          "Гусёна",
+          4,
+          "images/gosalyn20.webp"
+        )
+      );
+      questions.push(
+        new question(
+          "Как зовут этого персонажа?",
+          "Изма",
+          "Урсула",
+          "Круэлла",
+          "Зира",
+          1,
+          "images/izma.jpg"
+        )
+      );
+      questions.push(
+        new question(
+          "Как зовут этого персонажа?",
+          "Джон",
+          "Джим",
+          "Джек",
+          "Джейк",
+          4,
+          "images/jeik.webp"
+        )
+      );
+      questions.push(
+        new question(
+          "Как зовут этого персонажа?",
+          "Ганту",
+          "Пликли",
+          "Джамбо",
+          "Хомяксвиль",
+          3,
+          "images/jambo.jpg"
+        )
+      );
+      questions.push(
+        new question(
+          "Как зовут этого персонажа?",
+          "Джим",
+          "Джон",
+          "Джейк",
+          "Джек",
+          1,
+          "images/jim.jpg"
+        )
+      );
+      currentquestion = 0;
+      test(questions[0]);
+      function test(vopros) {
+        Ans1.innerHTML = vopros.answer1;
+        Ans2.innerHTML = vopros.answer2;
+        Ans3.innerHTML = vopros.answer3;
+        Ans4.innerHTML = vopros.answer4;
+        Qimg.src = vopros.img;
+        Question.innerHTML = vopros.quest;
+      }
+      function Answered(answer) {
+        if (otvetil) return;
+        if (answer == questions[currentquestion].correctanswer) count++;
+        document.getElementById("Ans" + answer).style.backgroundColor = "red";
+        document.getElementById(
+          "Ans" + questions[currentquestion].correctanswer
+        ).style.backgroundColor = "green";
+        currentquestion++;
+        otvetil = true;
+      }
+      function NextQuestion() {
+        if (otvetil) {
+          if (currentquestion < questions.length) {
+            clear();
+            test(questions[currentquestion]);
+          } else {
+            Victoryna.style.display = "none";
+            End.style.display = "block";
+            h2end.innerHTML =
+              "Вы ответили на " +
+              count +
+              " из " +
+              questions.length +
+              " вопросов";
+          }
+          otvetil = false;
+        } else {
+          alert("Вы еще не ответили на вопрос");
+        }
+      }
+      function clear() {
+        Qimg.src = "";
+        Qimg.display = "none";
+        Question = "";
+        for (let i = 1; i <= 4; i++) {
+          document.getElementById("Ans" + i).innerHTML = "";
+          document.getElementById("Ans" + i).style.backgroundColor = "white";
+        }
+      }
+    </script>
+  </body>
+</html>
